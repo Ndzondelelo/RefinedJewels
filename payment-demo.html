@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#111116" />
+  <meta name="description" content="Preview the future Refined Jewels hosted Yoco or PayFast checkout. This demonstration does not process payments or collect card details." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <title>Payment Demo | Refined Jewels</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap');
+
+    :root { --ink:#111116; --ink-soft:#1c1d23; --paper:#f7f5ef; --pearl:#fffefa; --ruby:#d92543; --ruby-dark:#b91d36; --gold:#c09a5b; --gold-light:#e0c995; --line:#ded9ce; --muted:#6b675f; --green:#315d49; }
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; margin: 0; display: grid; grid-template-rows: auto 1fr auto; color: var(--ink); background: linear-gradient(135deg,#efebe1,var(--paper)); font-family: 'DM Sans',sans-serif; }
+    a,button { -webkit-tap-highlight-color: transparent; }
+    :focus-visible { outline: 3px solid var(--gold-light); outline-offset: 3px; }
+    .site-header { min-height: 82px; padding: 12px clamp(20px,5vw,76px); display: flex; align-items: center; justify-content: space-between; gap: 20px; color: var(--pearl); background: var(--ink); }
+    .brand { color: var(--pearl); text-decoration: none; font: 500 15px 'Playfair Display',serif; letter-spacing: .14em; }
+    .back-link { color: var(--gold-light); text-decoration: none; font: 600 10px 'DM Sans',sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+    main { width: min(1040px,calc(100% - 40px)); margin: clamp(42px,7vw,90px) auto; }
+    .demo-banner { margin-bottom: 24px; padding: 15px 18px; color: #683b00; background: #fff0cc; border: 1px solid #e4c57b; font-size: 12px; line-height: 1.55; }
+    .checkout-card { display: grid; grid-template-columns: minmax(0,1fr) minmax(300px,.72fr); background: var(--pearl); box-shadow: 0 24px 64px rgba(17,17,22,.13); }
+    .checkout-main { padding: clamp(30px,5vw,58px); }
+    .provider-name { margin: 0 0 14px; color: var(--ruby); font: 700 10px 'DM Sans',sans-serif; letter-spacing: .18em; text-transform: uppercase; }
+    h1 { margin: 0; font: 500 clamp(42px,6vw,72px)/.98 'Playfair Display',serif; letter-spacing: -.045em; }
+    .intro { max-width: 550px; margin: 22px 0 30px; color: var(--muted); font-size: 14px; line-height: 1.7; }
+    .safe-box { padding: 17px; display: grid; grid-template-columns: auto 1fr; gap: 12px; background: #edf5f0; border-left: 3px solid var(--green); }
+    .safe-box span { color: var(--green); font-size: 20px; }
+    .safe-box strong { display: block; margin-bottom: 4px; color: var(--green); font-size: 12px; }
+    .safe-box p { margin: 0; color: #4e6559; font-size: 11px; line-height: 1.55; }
+    .demo-action { width: 100%; min-height: 52px; margin-top: 28px; padding: 14px 18px; color: white; background: var(--ruby); border: 0; border-radius: 2px; cursor: pointer; font: 700 10px 'DM Sans',sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+    .demo-action:hover { background: var(--ruby-dark); }
+    .demo-action:disabled { color: #888780; background: #d8d5ce; cursor: not-allowed; }
+    .order-panel { padding: clamp(28px,4vw,45px); color: var(--pearl); background: var(--ink-soft); }
+    .order-panel h2 { margin: 0 0 22px; font: 500 28px 'Playfair Display',serif; }
+    .order-lines { margin: 0; padding: 0; list-style: none; }
+    .order-lines li { padding: 13px 0; display: flex; justify-content: space-between; gap: 15px; border-top: 1px solid rgba(255,255,255,.12); color: #c8c5bf; font-size: 11px; line-height: 1.5; }
+    .order-lines strong { color: var(--pearl); font: 500 10px 'DM Mono',monospace; white-space: nowrap; }
+    .summary-row { padding: 15px 0; display: flex; justify-content: space-between; gap: 15px; border-top: 1px solid rgba(255,255,255,.12); color: #c8c5bf; font-size: 11px; }
+    .summary-row.total { margin-top: 8px; padding-top: 22px; color: var(--pearl); font-size: 14px; }
+    .summary-row.total strong { color: var(--gold-light); font: 500 17px 'DM Mono',monospace; }
+    .delivery-copy { max-width: 175px; color: var(--pearl); text-align: right; }
+    .success { margin-top: 28px; padding: 22px; background: #edf5f0; border: 1px solid #b8d1c2; }
+    .success h2 { margin: 0 0 8px; color: var(--green); font: 500 28px 'Playfair Display',serif; }
+    .success p { margin: 0 0 18px; color: #4e6559; font-size: 12px; line-height: 1.6; }
+    .whatsapp-link { min-height: 48px; padding: 13px 17px; display: inline-flex; align-items: center; justify-content: center; color: white; background: var(--green); text-decoration: none; font: 700 10px 'DM Sans',sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+    footer { padding: 25px; color: #8d887f; background: #0c0c10; text-align: center; font: 400 10px 'DM Mono',monospace; }
+    .footer-links { margin-bottom: 13px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 18px; }
+    .footer-links a { color: #aaa59b; text-decoration: none; font: 600 9px 'DM Sans',sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+    @media(max-width:760px){ .checkout-card{grid-template-columns:1fr}.order-panel{order:-1}.site-header{min-height:72px}.brand{font-size:12px}.checkout-main{padding:30px 22px} }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">REFINED JEWELS</a>
+    <a class="back-link" href="basket.html">← Back to basket</a>
+  </header>
+
+  <main>
+    <div class="demo-banner" role="status"><strong>Demo checkout only:</strong> this page does not connect to Yoco or PayFast, ask for card details, or process a payment.</div>
+    <section class="checkout-card" aria-labelledby="checkout-title">
+      <div class="checkout-main">
+        <p class="provider-name" id="provider-name">Payment demo</p>
+        <h1 id="checkout-title">Preview your checkout.</h1>
+        <p class="intro">This is a safe placeholder for the future hosted payment page. When the live account is ready, this step can redirect customers to the provider’s secure checkout.</p>
+        <div class="safe-box"><span aria-hidden="true">✓</span><div><strong>No card details are requested here</strong><p>The real checkout must be hosted by the selected payment provider.</p></div></div>
+        <button class="demo-action" id="demo-action" type="button">Complete demo payment</button>
+        <div class="success" id="success" hidden>
+          <h2>Demo complete</h2>
+          <p>No money was charged. Send the order to Refined Jewels on WhatsApp so availability, delivery cost, and real payment instructions can be confirmed.</p>
+          <a class="whatsapp-link" id="whatsapp-link" href="#">Send order on WhatsApp ↗</a>
+        </div>
+      </div>
+
+      <aside class="order-panel" aria-labelledby="order-title">
+        <h2 id="order-title">Order summary</h2>
+        <ul class="order-lines" id="order-lines"></ul>
+        <div class="summary-row"><span>Delivery</span><strong class="delivery-copy" id="delivery-copy">To be confirmed</strong></div>
+        <div class="summary-row"><span>Delivery fee</span><strong>Confirmed on WhatsApp</strong></div>
+        <div class="summary-row total"><span>Product total</span><strong id="order-total">ZAR 0.00</strong></div>
+      </aside>
+    </section>
+  </main>
+
+  <footer><nav class="footer-links" aria-label="Policies"><a href="delivery.html">Delivery</a><a href="returns.html">Returns</a><a href="privacy.html">Privacy</a><a href="jewellery-care.html">Jewellery care</a></nav><span>© Refined Jewels &nbsp;·&nbsp; Affordable luxury</span></footer>
+
+  <script>
+    const basketStorageKey = 'refinedJewelsBasket';
+    const checkoutStorageKey = 'refinedJewelsCheckout';
+    const whatsappNumber = '151810350284989';
+    const providerParam = new URLSearchParams(window.location.search).get('provider');
+    const provider = providerParam === 'payfast' ? 'payfast' : 'yoco';
+    const providerLabel = provider === 'payfast' ? 'PayFast' : 'Yoco';
+
+    const readJson = (key, fallback) => {
+      try { return JSON.parse(localStorage.getItem(key)) ?? fallback; }
+      catch { return fallback; }
+    };
+    const basket = readJson(basketStorageKey, []).filter((item) => item && Number(item.quantity) > 0);
+    const checkout = readJson(checkoutStorageKey, {});
+    const formatPrice = (value) => `ZAR ${Number(value).toFixed(2)}`;
+    const total = basket.reduce((sum, item) => sum + Number(item.price) * Number(item.quantity), 0);
+
+    document.title = `${providerLabel} Demo | Refined Jewels`;
+    document.getElementById('provider-name').textContent = `${providerLabel} hosted checkout · Demo`;
+    document.getElementById('demo-action').textContent = `Complete ${providerLabel} demo`;
+    document.getElementById('order-total').textContent = formatPrice(total);
+    document.getElementById('delivery-copy').textContent = checkout.label || 'To be confirmed on WhatsApp';
+
+    const orderLines = document.getElementById('order-lines');
+    basket.forEach((item) => {
+      const row = document.createElement('li');
+      const description = document.createElement('span');
+      const option = item.optionValue ? ` · ${item.optionLabel || 'Option'}: ${item.optionValue}` : '';
+      description.textContent = `${item.title}${option} × ${item.quantity}`;
+      const amount = document.createElement('strong');
+      amount.textContent = formatPrice(Number(item.price) * Number(item.quantity));
+      row.append(description, amount);
+      orderLines.appendChild(row);
+    });
+
+    const demoAction = document.getElementById('demo-action');
+    if (!basket.length) {
+      const row = document.createElement('li');
+      row.textContent = 'Your basket is empty.';
+      orderLines.appendChild(row);
+      demoAction.disabled = true;
+      demoAction.textContent = 'Basket is empty';
+    }
+
+    const buildWhatsAppUrl = () => {
+      const lines = basket.map((item, index) => {
+        const option = item.optionValue ? ` (${item.optionLabel || 'Option'}: ${item.optionValue})` : '';
+        return `${index + 1}. ${item.title}${option} × ${item.quantity} — ${formatPrice(Number(item.price) * Number(item.quantity))}`;
+      });
+      const message = [
+        'Hello Refined Jewels, I would like to order:',
+        '',
+        ...lines,
+        '',
+        `Product total: ${formatPrice(total)}`,
+        `Delivery choice: ${checkout.label || 'Please confirm on WhatsApp'}`,
+        `Preferred payment provider: ${providerLabel} (demo selection only)`,
+        '',
+        'Please confirm availability, delivery costs, and a secure real payment link.'
+      ].join('\n');
+      return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    };
+
+    demoAction.addEventListener('click', () => {
+      demoAction.hidden = true;
+      const success = document.getElementById('success');
+      const whatsappLink = document.getElementById('whatsapp-link');
+      whatsappLink.href = buildWhatsAppUrl();
+      success.hidden = false;
+      success.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      whatsappLink.focus();
+    });
+  </script>
+</body>
+</html>

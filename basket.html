@@ -4,7 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#111116" />
-  <meta name="description" content="Review your Refined Jewels basket and send your order through WhatsApp." />
+  <meta name="description" content="Review your Refined Jewels basket, choose delivery or collection, and continue securely through WhatsApp, Yoco or PayFast." />
+  <meta name="robots" content="noindex, follow" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
   <title>Your Basket | Refined Jewels</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap');
@@ -86,6 +88,7 @@
 
     .basket-item img { width: 132px; height: 132px; object-fit: cover; background: #eee9df; }
     .item-copy h2 { margin: 0 0 10px; font: 500 23px/1.15 'Playfair Display', serif; }
+    .item-option { margin: -3px 0 10px; color: var(--muted); font-size: 12px; }
     .unit-price { margin: 0 0 20px; color: var(--ruby-dark); font: 500 11px 'DM Mono', monospace; }
 
     .quantity-control { display: inline-flex; align-items: center; border: 1px solid var(--line); }
@@ -118,6 +121,19 @@
     .summary-row.total { margin-top: 8px; padding: 23px 0; align-items: baseline; color: var(--pearl); font-size: 15px; }
     .summary-row.total strong { color: var(--gold-light); font-size: 18px; }
 
+    .checkout-fieldset { margin: 20px 0 0; padding: 18px 0 0; border: 0; border-top: 1px solid rgba(255,255,255,.12); }
+    .checkout-fieldset legend { padding: 0; color: var(--gold-light); font: 600 10px 'DM Sans', sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+    .field-label { display: block; margin: 14px 0 7px; color: #c6c2ba; font-size: 12px; }
+    .checkout-fieldset select { width: 100%; min-height: 45px; padding: 10px 34px 10px 12px; color: var(--ink); background: var(--pearl); border: 0; border-radius: 2px; font: 500 12px 'DM Sans', sans-serif; }
+    .delivery-help { margin: 11px 0 0; color: #aaa69d; font-size: 10px; line-height: 1.55; }
+    .payment-options { display: grid; gap: 9px; margin-top: 14px; }
+    .payment-option { padding: 12px; display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; border: 1px solid rgba(255,255,255,.16); cursor: pointer; }
+    .payment-option:has(input:checked) { border-color: var(--gold-light); background: rgba(224,201,149,.09); }
+    .payment-option input { margin: 3px 0 0; accent-color: var(--ruby); }
+    .payment-option strong { display: block; color: var(--pearl); font-size: 12px; }
+    .payment-option small { display: block; margin-top: 4px; color: #aaa69d; font-size: 10px; line-height: 1.4; }
+    .demo-badge { margin-left: 5px; padding: 2px 5px; color: var(--ink); background: var(--gold-light); border-radius: 999px; font-size: 8px; letter-spacing: .08em; text-transform: uppercase; }
+
     .checkout-button, .shop-button {
       width: 100%;
       min-height: 52px;
@@ -144,6 +160,9 @@
     .secure-note { margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.1); color: #918d85; font-size: 10px; line-height: 1.6; }
 
     footer { padding: 28px; color: #8d887f; background: #0c0c10; text-align: center; font: 400 10px 'DM Mono', monospace; }
+    .footer-policy-links { margin-bottom: 14px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 20px; }
+    .footer-policy-links a { color: #aaa59b; text-decoration: none; font: 600 9px 'DM Sans', sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+    .footer-policy-links a:hover { color: var(--gold-light); }
 
     @media (max-width: 820px) {
       .basket-layout { grid-template-columns: 1fr; }
@@ -203,25 +222,67 @@
       <aside class="summary" aria-labelledby="summary-title">
         <h2 id="summary-title">Order summary</h2>
         <div class="summary-row"><span>Items</span><strong id="item-count">0</strong></div>
-        <div class="summary-row"><span>Delivery</span><strong>Confirmed on WhatsApp</strong></div>
-        <div class="summary-row total"><span>Total</span><strong id="basket-total">ZAR 0.00</strong></div>
-        <button class="checkout-button" id="checkout-button" type="button" disabled>Pay / continue on WhatsApp ↗</button>
-        <p class="checkout-note">You will not be charged on this website. WhatsApp will open with your selected items and total ready to send.</p>
-        <p class="secure-note">Refined Jewels will confirm availability, delivery costs, and the approved payment method before you pay.</p>
+        <div class="summary-row"><span>Delivery fee</span><strong>Confirmed on WhatsApp</strong></div>
+        <div class="summary-row total"><span>Product total</span><strong id="basket-total">ZAR 0.00</strong></div>
+
+        <fieldset class="checkout-fieldset">
+          <legend>Delivery or collection</legend>
+          <label class="field-label" for="delivery-method">Method</label>
+          <select id="delivery-method">
+            <option value="collection">Collection — arrange on WhatsApp</option>
+            <option value="local">Local delivery — estimated 1–3 business days</option>
+            <option value="courier">Nationwide courier — estimated 3–7 business days</option>
+          </select>
+          <div id="delivery-area-wrap">
+            <label class="field-label" for="delivery-area">Delivery area</label>
+            <select id="delivery-area">
+              <option value="Gauteng">Gauteng</option>
+              <option value="Eastern Cape">Eastern Cape</option>
+              <option value="Free State">Free State</option>
+              <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+              <option value="Limpopo">Limpopo</option>
+              <option value="Mpumalanga">Mpumalanga</option>
+              <option value="North West">North West</option>
+              <option value="Northern Cape">Northern Cape</option>
+              <option value="Western Cape">Western Cape</option>
+            </select>
+          </div>
+          <p class="delivery-help" id="delivery-help">Collection time and location will be confirmed through WhatsApp.</p>
+        </fieldset>
+
+        <fieldset class="checkout-fieldset">
+          <legend>Payment option</legend>
+          <div class="payment-options">
+            <label class="payment-option"><input type="radio" name="payment-method" value="whatsapp" checked /><span><strong>Confirm on WhatsApp</strong><small>Send the basket first and receive confirmed payment instructions.</small></span></label>
+            <label class="payment-option"><input type="radio" name="payment-method" value="yoco" /><span><strong>Yoco <span class="demo-badge">Demo</span></strong><small>Preview a future hosted Yoco checkout. No payment is processed.</small></span></label>
+            <label class="payment-option"><input type="radio" name="payment-method" value="payfast" /><span><strong>PayFast <span class="demo-badge">Demo</span></strong><small>Preview a future hosted PayFast checkout. No payment is processed.</small></span></label>
+          </div>
+        </fieldset>
+
+        <button class="checkout-button" id="checkout-button" type="button" disabled>Continue on WhatsApp ↗</button>
+        <p class="checkout-note" id="checkout-note">WhatsApp will open with your selected items and delivery choice ready to send.</p>
+        <p class="secure-note">Delivery cost is excluded from the product total and confirmed through WhatsApp. Yoco and PayFast are demonstrations only; this website never collects card details.</p>
       </aside>
     </div>
   </main>
 
-  <footer>© Refined Jewels &nbsp;·&nbsp; Affordable luxury</footer>
+  <footer><nav class="footer-policy-links" aria-label="Policies"><a href="delivery.html">Delivery</a><a href="returns.html">Returns</a><a href="exchanges.html">Exchanges</a><a href="privacy.html">Privacy</a><a href="jewellery-care.html">Jewellery care</a></nav><span>© Refined Jewels &nbsp;·&nbsp; Affordable luxury</span></footer>
 
   <script>
     const basketStorageKey = 'refinedJewelsBasket';
+    const checkoutStorageKey = 'refinedJewelsCheckout';
     const whatsappNumber = '151810350284989';
     const basketList = document.getElementById('basket-list');
     const emptyBasket = document.getElementById('empty-basket');
     const itemCount = document.getElementById('item-count');
     const basketTotal = document.getElementById('basket-total');
     const checkoutButton = document.getElementById('checkout-button');
+    const checkoutNote = document.getElementById('checkout-note');
+    const deliveryMethod = document.getElementById('delivery-method');
+    const deliveryArea = document.getElementById('delivery-area');
+    const deliveryAreaWrap = document.getElementById('delivery-area-wrap');
+    const deliveryHelp = document.getElementById('delivery-help');
+    const paymentMethods = [...document.querySelectorAll('input[name="payment-method"]')];
 
     const formatPrice = (value) => `ZAR ${Number(value).toFixed(2)}`;
 
@@ -237,6 +298,48 @@
     const writeBasket = (basket) => {
       localStorage.setItem(basketStorageKey, JSON.stringify(basket));
       renderBasket();
+    };
+
+    const selectedPaymentMethod = () => paymentMethods.find((input) => input.checked)?.value || 'whatsapp';
+
+    const deliveryDetails = () => {
+      const method = deliveryMethod.value;
+      const labels = {
+        collection: 'Collection — arrange on WhatsApp',
+        local: `Local delivery to ${deliveryArea.value} — estimated 1–3 business days`,
+        courier: `Nationwide courier to ${deliveryArea.value} — estimated 3–7 business days`
+      };
+      return { method, area: method === 'collection' ? '' : deliveryArea.value, label: labels[method] };
+    };
+
+    const saveCheckoutPreferences = () => {
+      const delivery = deliveryDetails();
+      const preferences = { ...delivery, paymentProvider: selectedPaymentMethod() };
+      localStorage.setItem(checkoutStorageKey, JSON.stringify(preferences));
+      return preferences;
+    };
+
+    const updateCheckoutControls = () => {
+      const isCollection = deliveryMethod.value === 'collection';
+      deliveryAreaWrap.hidden = isCollection;
+      deliveryHelp.textContent = isCollection
+        ? 'Collection time and location will be confirmed through WhatsApp.'
+        : 'Delivery is available across South Africa. The delivery fee is confirmed through WhatsApp before payment.';
+
+      const provider = selectedPaymentMethod();
+      const labels = {
+        whatsapp: 'Continue on WhatsApp ↗',
+        yoco: 'Preview Yoco demo →',
+        payfast: 'Preview PayFast demo →'
+      };
+      const notes = {
+        whatsapp: 'WhatsApp will open with your selected items and delivery choice ready to send.',
+        yoco: 'This opens a local Yoco demonstration. No payment or card details are collected.',
+        payfast: 'This opens a local PayFast demonstration. No payment or card details are collected.'
+      };
+      checkoutButton.textContent = labels[provider];
+      checkoutNote.textContent = notes[provider];
+      saveCheckoutPreferences();
     };
 
     const makeButton = (label, className, onClick) => {
@@ -281,6 +384,11 @@
         price.className = 'unit-price';
         price.textContent = `${formatPrice(item.price)} each`;
 
+        const option = document.createElement('p');
+        option.className = 'item-option';
+        option.textContent = item.optionValue ? `${item.optionLabel || 'Option'}: ${item.optionValue}` : '';
+        option.hidden = !item.optionValue;
+
         const quantity = document.createElement('div');
         quantity.className = 'quantity-control';
         quantity.setAttribute('aria-label', `Quantity for ${item.title}`);
@@ -293,7 +401,7 @@
         const increase = makeButton('+', '', () => changeQuantity(item.id, 1));
         increase.setAttribute('aria-label', `Increase ${item.title} quantity`);
         quantity.append(decrease, quantityOutput, increase);
-        copy.append(heading, price, quantity);
+        copy.append(heading, option, price, quantity);
 
         const itemEnd = document.createElement('div');
         itemEnd.className = 'item-end';
@@ -321,9 +429,16 @@
       const basket = readBasket().filter((item) => Number(item.quantity) > 0);
       if (!basket.length) return;
 
+      const preferences = saveCheckoutPreferences();
+      if (preferences.paymentProvider === 'yoco' || preferences.paymentProvider === 'payfast') {
+        window.location.href = `payment-demo.html?provider=${preferences.paymentProvider}`;
+        return;
+      }
+
       const lines = basket.map((item, index) => {
         const lineTotal = Number(item.price) * Number(item.quantity);
-        return `${index + 1}. ${item.title} × ${item.quantity} — ${formatPrice(lineTotal)}`;
+        const selectedOption = item.optionValue ? ` (${item.optionLabel || 'Option'}: ${item.optionValue})` : '';
+        return `${index + 1}. ${item.title}${selectedOption} × ${item.quantity} — ${formatPrice(lineTotal)}`;
       });
       const total = basket.reduce((sum, item) => sum + Number(item.price) * Number(item.quantity), 0);
       const message = [
@@ -331,7 +446,8 @@
         '',
         ...lines,
         '',
-        `Order total: ${formatPrice(total)}`,
+        `Product total: ${formatPrice(total)}`,
+        `Delivery choice: ${preferences.label}`,
         '',
         'Please confirm availability, delivery costs, and payment details.'
       ].join('\n');
@@ -339,6 +455,10 @@
       window.location.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
     });
 
+    deliveryMethod.addEventListener('change', updateCheckoutControls);
+    deliveryArea.addEventListener('change', updateCheckoutControls);
+    paymentMethods.forEach((input) => input.addEventListener('change', updateCheckoutControls));
+    updateCheckoutControls();
     renderBasket();
     window.addEventListener('storage', renderBasket);
   </script>

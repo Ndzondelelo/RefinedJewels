@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /basket.html
+Disallow: /payment-demo.html
+
+Sitemap: https://ndzondelelo.github.io/RefinedJewels/sitemap.xml
