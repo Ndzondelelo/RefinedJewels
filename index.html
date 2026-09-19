@@ -33,6 +33,12 @@
       <a href="#testimonials">Testimonials</a>
       <a class="catalog-link" href="https://wa.me/c/151810350284989" target="_blank" rel="noreferrer">WhatsApp catalog <span aria-hidden="true">↗</span></a>
     </nav>
+
+    <a class="header-basket" href="basket.html" aria-label="View basket">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16l-1.2 12H5.2L4 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+      <span class="basket-label">Basket</span>
+      <span class="basket-count" aria-live="polite">0</span>
+    </a>
   </header>
 
   <section id="top" class="hero" aria-labelledby="hero-title">
@@ -162,7 +168,7 @@
         <p class="eyebrow">TESTIMONIALS</p>
         <h2 id="testimonials-title">Your experience<br><em>matters to us.</em></h2>
         <p>Purchased from Refined Jewels? Tell us about your favourite piece, the service you received, or how you styled your order. Real customer feedback will be featured here.</p>
-        <a class="button primary" href="https://wa.me/151810350284989?text=I%27d%20like%20to%20share%20my%20Refined%20Jewels%20experience" target="_blank" rel="noreferrer">Share your experience ↗</a>
+        <a class="button primary" href="https://wa.me/c/151810350284989" target="_blank" rel="noreferrer">Open WhatsApp catalog ↗</a>
       </div>
       <aside class="testimonial-placeholder" aria-label="Customer testimonial invitation">
         <span aria-hidden="true">“</span>
@@ -340,7 +346,7 @@
     isolation: isolate;
     background-image:
       linear-gradient(90deg, rgba(9,9,13,.96) 0%, rgba(13,13,18,.82) 42%, rgba(13,13,18,.28) 72%, rgba(13,13,18,.38) 100%),
-      url('BgHeader picture.png');
+      url('assets/BgHeader picture.png');
     background-size: cover;
     background-position: center 48%;
   }
@@ -734,7 +740,7 @@
       align-items: flex-end;
       background-image:
         linear-gradient(180deg, rgba(9,9,13,.2) 0%, rgba(9,9,13,.54) 32%, rgba(9,9,13,.96) 74%, #09090d 100%),
-        url('BgHeader picture.png');
+        url('assets/BgHeader picture.png');
       background-position: 62% center;
     }
 
@@ -777,6 +783,71 @@
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+  }
+</style>
+
+<style>
+  .topbar { justify-content: flex-start; }
+  .main-menu { margin-left: auto; }
+
+  .header-basket {
+    order: 3;
+    min-width: 84px;
+    height: 44px;
+    margin-left: 8px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    color: var(--pearl);
+    border: 1px solid rgba(224,201,149,.42);
+    border-radius: 999px;
+    text-decoration: none;
+    font: 600 10px 'DM Sans', sans-serif;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    transition: color .2s ease, border-color .2s ease, background .2s ease;
+  }
+
+  .header-basket:hover { color: white; border-color: var(--ruby); background: var(--ruby); }
+  .header-basket svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .basket-count { min-width: 19px; height: 19px; padding: 0 5px; display: grid; place-items: center; color: var(--ink); background: var(--gold-light); border-radius: 999px; font: 700 10px 'DM Sans', sans-serif; }
+
+  .add-to-basket {
+    width: 100%;
+    min-height: 45px;
+    margin-top: 20px;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    color: white;
+    background: var(--ink);
+    border: 1px solid var(--ink);
+    border-radius: 2px;
+    cursor: pointer;
+    font: 600 10px 'DM Sans', sans-serif;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    transition: background .2s ease, border-color .2s ease, transform .2s ease;
+  }
+
+  .add-to-basket:hover { background: var(--ruby); border-color: var(--ruby); transform: translateY(-2px); }
+  .add-to-basket.added { background: #315d49; border-color: #315d49; }
+  .add-to-basket svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  @media (max-width: 1100px) {
+    .main-menu { margin-left: 0; }
+    .header-basket { margin-left: auto; }
+    .menu-toggle { order: 4; margin-left: 8px; }
+  }
+
+  @media (max-width: 520px) {
+    .header-basket { min-width: 48px; width: 48px; padding: 0 6px; gap: 2px; }
+    .basket-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+    .basket-count { min-width: 17px; height: 17px; padding: 0 4px; transform: translate(3px,-8px); }
   }
 </style>
 
@@ -831,6 +902,80 @@
   document.querySelectorAll('[data-social-placeholder]').forEach((link) => {
     link.addEventListener('click', (event) => event.preventDefault());
   });
+
+  const basketStorageKey = 'refinedJewelsBasket';
+  const basketCount = document.querySelector('.basket-count');
+
+  const readBasket = () => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(basketStorageKey) || '[]');
+      return Array.isArray(saved) ? saved : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const saveBasket = (basket) => {
+    localStorage.setItem(basketStorageKey, JSON.stringify(basket));
+    updateBasketCount();
+  };
+
+  const updateBasketCount = () => {
+    const quantity = readBasket().reduce((total, item) => total + Number(item.quantity || 0), 0);
+    basketCount.textContent = String(quantity);
+    basketCount.closest('.header-basket').setAttribute('aria-label', `View basket with ${quantity} item${quantity === 1 ? '' : 's'}`);
+  };
+
+  const productId = (title) => title
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+
+  document.querySelectorAll('.product-card').forEach((card) => {
+    const copy = card.querySelector('.product-copy');
+    const title = card.querySelector('h3')?.textContent?.trim();
+    const priceText = card.querySelector('.product-copy strong')?.textContent || '';
+    const priceMatch = priceText.match(/ZAR\s*([\d,.]+)/i);
+    const image = card.querySelector('.product-image');
+
+    if (!copy || !title || !priceMatch || !image) return;
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'add-to-basket';
+    button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16l-1.2 12H5.2L4 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 11v5M9.5 13.5h5"/></svg><span>Add to basket</span>';
+    button.setAttribute('aria-label', `Add ${title} to basket`);
+
+    button.addEventListener('click', () => {
+      const basket = readBasket();
+      const id = productId(title);
+      const existing = basket.find((item) => item.id === id);
+
+      if (existing) existing.quantity += 1;
+      else basket.push({
+        id,
+        title,
+        price: Number(priceMatch[1].replace(/,/g, '')),
+        image: image.getAttribute('src'),
+        quantity: 1
+      });
+
+      saveBasket(basket);
+      button.classList.add('added');
+      button.querySelector('span').textContent = 'Added to basket ✓';
+      window.setTimeout(() => {
+        button.classList.remove('added');
+        button.querySelector('span').textContent = 'Add to basket';
+      }, 1400);
+    });
+
+    copy.appendChild(button);
+  });
+
+  updateBasketCount();
+  window.addEventListener('storage', updateBasketCount);
 
   const lightbox = document.getElementById('product-lightbox');
   const lightboxImage = document.getElementById('lightbox-image');
